@@ -32,27 +32,27 @@ describe("LoginScreen", () => {
     const { getByTestId } = render(<LoginScreen />);
 
     fireEvent.changeText(getByTestId("auth-email-input"), "test@example.com");
-    fireEvent.changeText(getByTestId("auth-password-input"), "123456");
+    fireEvent.changeText(getByTestId("auth-password-input"), "password123");
     fireEvent.press(getByTestId("auth-submit-button"));
 
     await waitFor(() =>
       expect(mockedSignIn).toHaveBeenCalledWith({
         email: "test@example.com",
-        password: "123456",
+        password: "password123",
       }),
     );
   });
 
   it("shows service errors to the user", async () => {
     const mockedSignIn = authService.signInWithPassword as jest.Mock;
-    mockedSignIn.mockRejectedValue(new Error("Invalid login"));
+    mockedSignIn.mockRejectedValue(new Error("Invalid login credentials"));
 
     const { getByTestId, findByText } = render(<LoginScreen />);
 
     fireEvent.changeText(getByTestId("auth-email-input"), "x@example.com");
-    fireEvent.changeText(getByTestId("auth-password-input"), "wrong");
+    fireEvent.changeText(getByTestId("auth-password-input"), "password123");
     fireEvent.press(getByTestId("auth-submit-button"));
 
-    expect(await findByText("Invalid login")).toBeTruthy();
+    expect(await findByText("Invalid email or password.")).toBeTruthy();
   });
 });

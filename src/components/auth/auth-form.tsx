@@ -13,32 +13,39 @@ import { ThemedView } from "@/src/components/themed-view";
 type AuthFormValues = {
   email: string;
   password: string;
+  confirmPassword?: string;
 };
 
 type AuthFormProps = {
+  variant: "login" | "register";
   title: string;
   submitLabel: string;
   isSubmitting: boolean;
+  infoMessage?: string | null;
   errorMessage: string | null;
   onSubmit: (values: AuthFormValues) => Promise<void>;
   footer: ReactNode;
 };
 
 export function AuthForm({
+  variant,
   title,
   submitLabel,
   isSubmitting,
+  infoMessage,
   errorMessage,
   onSubmit,
   footer,
 }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async () => {
     await onSubmit({
       email: email.trim(),
       password,
+      confirmPassword: variant === "register" ? confirmPassword : undefined,
     });
   };
 
@@ -68,6 +75,20 @@ export function AuthForm({
           value={password}
           onChangeText={setPassword}
         />
+        {variant === "register" ? (
+          <TextInput
+            accessibilityLabel="Confirm password input"
+            autoCapitalize="none"
+            autoComplete="password"
+            placeholder="Confirm password"
+            secureTextEntry
+            testID="auth-confirm-password-input"
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        ) : null}
+        {infoMessage ? <ThemedText style={styles.info}>{infoMessage}</ThemedText> : null}
         {errorMessage ? <ThemedText style={styles.error}>{errorMessage}</ThemedText> : null}
         <Pressable
           accessibilityRole="button"
@@ -121,5 +142,8 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "#D70015",
+  },
+  info: {
+    color: "#0A84FF",
   },
 });

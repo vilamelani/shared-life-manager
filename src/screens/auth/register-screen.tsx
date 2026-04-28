@@ -6,27 +6,52 @@ import { AuthForm } from "@/src/components/auth/auth-form";
 import { ThemedText } from "@/src/components/themed-text";
 import { authService } from "@/src/services/auth/auth-service";
 import type { SignUpParams } from "@/src/types/auth";
+import { normalizeAuthErrorMessage } from "@/src/utils/auth-error-message";
+import { validateSignUpInput } from "@/src/utils/auth-validation";
 
-const parseErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return "Unable to create your account right now. Please try again.";
+type RegisterFormParams = SignUpParams & {
+  confirmPassword?: string;
 };
 
 export function RegisterScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  const handleRegister = async ({ email, password }: SignUpParams) => {
+  const handleRegister = async ({
+    email,
+    password,
+    confirmPassword,
+  }: RegisterFormParams) => {
+    const validation = validateSignUpInput({
+      email,
+      password,
+      confirmPassword: confirmPassword ?? "",
+    });
+    if (!validation.isValid) {
+      setErrorMessage(validation.errorMessage);
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
+    setInfoMessage(null);
 
     try {
-      await authService.signUpWithPassword({ email, password });
+      const result = await authService.signUpWithPassword({ email, password });
+
+      if (!result.session) {
+        setInfoMessage(
+          "Check your inbox to confirm your email before signing in.",
+        );
+      }
     } catch (error) {
-      setErrorMessage(parseErrorMessage(error));
+      setErrorMessage(
+        normalizeAuthErrorMessage(
+          error,
+          "Unable to create your account right now. Please try again.",
+        ),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -34,9 +59,11 @@ export function RegisterScreen() {
 
   return (
     <AuthForm
+      variant="register"
       title="Create account"
       submitLabel="Create account"
       isSubmitting={isSubmitting}
+      infoMessage={infoMessage}
       errorMessage={errorMessage}
       onSubmit={handleRegister}
       footer={
