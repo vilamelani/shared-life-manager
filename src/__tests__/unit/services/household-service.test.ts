@@ -83,4 +83,47 @@ describe("householdService", () => {
     expect(result.inviteCode).toBe("JOINME");
     expect(eqInvite).toHaveBeenCalledWith("invite_code", "JOINME");
   });
+
+  it("lists user households from memberships", async () => {
+    const mockedFrom = supabase.from as jest.Mock;
+
+    const membershipsEq = jest.fn().mockResolvedValue({
+      data: [{ household_id: "h1" }],
+      error: null,
+    });
+    const membershipsSelect = jest.fn().mockReturnValue({ eq: membershipsEq });
+
+    const householdsIn = jest.fn().mockResolvedValue({
+      data: [
+        {
+          id: "h1",
+          name: "Family",
+          invite_code: "HOME11",
+          created_by: "u1",
+          created_at: "2026-01-01",
+        },
+      ],
+      error: null,
+    });
+    const householdsSelect = jest.fn().mockReturnValue({ in: householdsIn });
+
+    mockedFrom.mockImplementation((table: string) => {
+      if (table === "household_memberships") {
+        return { select: membershipsSelect };
+      }
+      return { select: householdsSelect };
+    });
+
+    const result = await householdService.listUserHouseholds("u1");
+
+    expect(result).toEqual([
+      {
+        id: "h1",
+        name: "Family",
+        inviteCode: "HOME11",
+        createdBy: "u1",
+        createdAt: "2026-01-01",
+      },
+    ]);
+  });
 });

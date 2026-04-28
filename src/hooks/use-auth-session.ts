@@ -24,6 +24,9 @@ export const useAuthSession = (): UseAuthSessionResult => {
         }
 
         authStore.setSession(nextSession);
+        if (nextSession) {
+          void authStore.loadHouseholds();
+        }
       })
       .catch(() => {
         if (!isActive) {
@@ -42,6 +45,11 @@ export const useAuthSession = (): UseAuthSessionResult => {
       }
 
       authStore.setSession(nextSession);
+      if (nextSession) {
+        void authStore.loadHouseholds();
+      } else {
+        authStore.clearSession();
+      }
     });
 
     return () => {

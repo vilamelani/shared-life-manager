@@ -2,12 +2,19 @@ import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 import { useAuthSession } from "@/src/hooks/use-auth-session";
 import { authService } from "@/src/services/auth/auth-service";
+import { householdService } from "@/src/services/household/household-service";
 import { authStore } from "@/src/store/auth-store";
 
 jest.mock("@/src/services/auth/auth-service", () => ({
   authService: {
     getSession: jest.fn(),
     onAuthStateChange: jest.fn(),
+  },
+}));
+
+jest.mock("@/src/services/household/household-service", () => ({
+  householdService: {
+    listUserHouseholds: jest.fn(),
   },
 }));
 
@@ -24,8 +31,10 @@ describe("useAuthSession", () => {
 
     const mockedGetSession = authService.getSession as jest.Mock;
     const mockedOnAuthStateChange = authService.onAuthStateChange as jest.Mock;
+    const mockedListUserHouseholds = householdService.listUserHouseholds as jest.Mock;
 
     mockedGetSession.mockResolvedValue(session);
+    mockedListUserHouseholds.mockResolvedValue([]);
     mockedOnAuthStateChange.mockImplementation((callback) => {
       authCallbackHolder.callback = callback;
       return { data: { subscription: { unsubscribe } } };

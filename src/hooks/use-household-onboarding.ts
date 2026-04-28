@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { householdService } from "@/src/services/household/household-service";
-import { useAuthStore } from "@/src/store/auth-store";
+import { authStore, useAuthStore } from "@/src/store/auth-store";
 import type { Household } from "@/src/types/household";
 
 type OnboardingMode = "create" | "join";
@@ -46,6 +46,7 @@ export const useHouseholdOnboarding = (): UseHouseholdOnboardingResult => {
           name: householdName,
           userId: user.id,
         });
+        authStore.addOrReplaceHousehold(createdHousehold);
         setHousehold(createdHousehold);
         setSuccessMessage("Household created successfully.");
         return;
@@ -55,6 +56,7 @@ export const useHouseholdOnboarding = (): UseHouseholdOnboardingResult => {
         inviteCode,
         userId: user.id,
       });
+      authStore.addOrReplaceHousehold(joinedHousehold);
       setHousehold(joinedHousehold);
       setSuccessMessage("Joined household successfully.");
     } catch (error) {

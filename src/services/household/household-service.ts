@@ -103,7 +103,35 @@ const joinHouseholdByInviteCode = async ({
   return mapHouseholdRow(household);
 };
 
+const listUserHouseholds = async (userId: string): Promise<Household[]> => {
+  const { data: memberships, error: membershipsError } = await supabase
+    .from("household_memberships")
+    .select("household_id")
+    .eq("user_id", userId);
+
+  if (membershipsError) {
+    throw membershipsError;
+  }
+
+  const householdIds = (memberships ?? []).map((membership) => membership.household_id);
+  if (!householdIds.length) {
+    return [];
+  }
+
+  const { data: households, error: householdsError } = await supabase
+    .from("households")
+    .select("*")
+    .in("id", householdIds);
+
+  if (householdsError) {
+    throw householdsError;
+  }
+
+  return (households ?? []).map(mapHouseholdRow);
+};
+
 export const householdService = {
   createHousehold,
   joinHouseholdByInviteCode,
+  listUserHouseholds,
 };
