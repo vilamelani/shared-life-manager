@@ -1,9 +1,5 @@
-import { View, Text } from "react-native";
+import { ShoppingScreen } from "@/src/screens/shopping/shopping-screen";
 
-export default function Shopping() {
-  return (
-    <View>
-      <Text>Shopping</Text>
-    </View>
-  );
+export default function ShoppingRoute() {
+  return <ShoppingScreen />;
 }

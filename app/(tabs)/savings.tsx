@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import { SavingsScreen } from "@/src/screens/savings/savings-screen";
 
-export default function Savings() {
-  return (
-    <View>
-      <Text>Savings</Text>
-    </View>
-  );
+export default function SavingsRoute() {
+  return <SavingsScreen />;
 }

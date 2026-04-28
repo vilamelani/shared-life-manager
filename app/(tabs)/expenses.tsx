@@ -1,9 +1,5 @@
-import { View, Text } from "react-native";
+import { ExpensesScreen } from "@/src/screens/expenses/expenses-screen";
 
-export default function Expenses() {
-  return (
-    <View>
-      <Text>Expenses</Text>
-    </View>
-  );
+export default function ExpensesRoute() {
+  return <ExpensesScreen />;
 }
