@@ -1,19 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 
 import { authService } from "@/src/services/auth/auth-service";
-import type { AuthSession } from "@/src/types/auth";
-
-type AuthStatus = "loading" | "authenticated" | "unauthenticated";
+import { authStore, useAuthStore } from "@/src/store/auth-store";
 
 type UseAuthSessionResult = {
-  session: AuthSession;
-  status: AuthStatus;
+  session: ReturnType<typeof authStore.getState>["session"];
+  status: ReturnType<typeof authStore.getState>["status"];
   isAuthenticated: boolean;
 };
 
 export const useAuthSession = (): UseAuthSessionResult => {
-  const [session, setSession] = useState<AuthSession>(null);
-  const [status, setStatus] = useState<AuthStatus>("loading");
+  const session = useAuthStore((state) => state.session);
+  const status = useAuthStore((state) => state.status);
 
   useEffect(() => {
     let isActive = true;
@@ -25,16 +23,15 @@ export const useAuthSession = (): UseAuthSessionResult => {
           return;
         }
 
-        setSession(nextSession);
-        setStatus(nextSession ? "authenticated" : "unauthenticated");
+        authStore.setSession(nextSession);
       })
       .catch(() => {
         if (!isActive) {
           return;
         }
 
-        setSession(null);
-        setStatus("unauthenticated");
+        authStore.clearSession();
+        authStore.setStatus("unauthenticated");
       });
 
     const {
@@ -44,8 +41,7 @@ export const useAuthSession = (): UseAuthSessionResult => {
         return;
       }
 
-      setSession(nextSession);
-      setStatus(nextSession ? "authenticated" : "unauthenticated");
+      authStore.setSession(nextSession);
     });
 
     return () => {
@@ -54,12 +50,9 @@ export const useAuthSession = (): UseAuthSessionResult => {
     };
   }, []);
 
-  return useMemo(
-    () => ({
-      session,
-      status,
-      isAuthenticated: status === "authenticated",
-    }),
-    [session, status],
-  );
+  return {
+    session,
+    status,
+    isAuthenticated: status === "authenticated",
+  };
 };

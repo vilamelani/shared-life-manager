@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 import { useAuthSession } from "@/src/hooks/use-auth-session";
 import { authService } from "@/src/services/auth/auth-service";
+import { authStore } from "@/src/store/auth-store";
 
 jest.mock("@/src/services/auth/auth-service", () => ({
   authService: {
@@ -11,6 +12,11 @@ jest.mock("@/src/services/auth/auth-service", () => ({
 }));
 
 describe("useAuthSession", () => {
+  beforeEach(() => {
+    authStore.resetForTests();
+    jest.clearAllMocks();
+  });
+
   it("hydrates with existing session and listens for auth updates", async () => {
     const unsubscribe = jest.fn();
     const authCallbackHolder: { callback?: (event: string, session: unknown) => void } = {};

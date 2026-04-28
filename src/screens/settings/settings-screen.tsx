@@ -2,17 +2,18 @@ import { Pressable, StyleSheet, View } from "react-native";
 
 import { ScreenTemplate } from "@/src/components/ui/screen-template";
 import { ThemedText } from "@/src/components/themed-text";
-import { useSignOut } from "@/src/hooks/use-sign-out";
+import { authStore, useAuthStore } from "@/src/store/auth-store";
 
 export function SettingsScreen() {
-  const { signOut, isSigningOut, errorMessage } = useSignOut();
+  const isSigningOut = useAuthStore((state) => state.isSigningOut);
+  const errorMessage = useAuthStore((state) => state.signOutError);
 
   return (
     <ScreenTemplate title="Settings" description="Manage your account preferences.">
       <View style={styles.actions}>
         <Pressable
           accessibilityRole="button"
-          onPress={signOut}
+          onPress={authStore.logout}
           style={styles.signOutButton}
         >
           <ThemedText style={styles.signOutLabel}>
