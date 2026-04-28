@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/src/components/themed-text";
@@ -6,15 +7,17 @@ import { ThemedView } from "@/src/components/themed-view";
 type ScreenTemplateProps = {
   title: string;
   description: string;
+  children?: ReactNode;
 };
 
-export function ScreenTemplate({ title, description }: ScreenTemplateProps) {
+export function ScreenTemplate({ title, description, children }: ScreenTemplateProps) {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <ThemedText type="title">{title}</ThemedText>
         <ThemedText>{description}</ThemedText>
       </View>
+      {children}
     </ThemedView>
   );
 }
