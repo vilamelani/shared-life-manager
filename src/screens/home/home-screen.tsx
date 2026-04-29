@@ -1,8 +1,9 @@
+import { ActiveHouseholdSwitcher } from "@/src/components/household/active-household-switcher";
 import { HouseholdOnboardingCard } from "@/src/components/household/household-onboarding-card";
 import { ScreenTemplate } from "@/src/components/ui/screen-template";
 import { useHouseholdOnboarding } from "@/src/hooks/use-household-onboarding";
 import { ThemedText } from "@/src/components/themed-text";
-import { useAuthStore } from "@/src/store/auth-store";
+import { authStore, useAuthStore } from "@/src/store/auth-store";
 
 export function HomeScreen() {
   const households = useAuthStore((state) => state.households);
@@ -38,6 +39,11 @@ export function HomeScreen() {
           Active household: {activeHousehold.name}
         </ThemedText>
       ) : null}
+      <ActiveHouseholdSwitcher
+        households={households}
+        activeHouseholdId={activeHouseholdId}
+        onSelectHousehold={authStore.setActiveHousehold}
+      />
       <HouseholdOnboardingCard
         mode={mode}
         householdName={householdName}

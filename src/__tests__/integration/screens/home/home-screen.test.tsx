@@ -67,4 +67,29 @@ describe("HomeScreen household onboarding", () => {
     );
     expect(await findByText("Joined household successfully.")).toBeTruthy();
   });
+
+  it("switches active household when user selects another option", async () => {
+    authStore.setHouseholds([
+      {
+        id: "h1",
+        name: "Home A",
+        inviteCode: "A11111",
+        createdBy: "u1",
+        createdAt: "2026-01-01",
+      },
+      {
+        id: "h2",
+        name: "Home B",
+        inviteCode: "B22222",
+        createdBy: "u2",
+        createdAt: "2026-01-01",
+      },
+    ]);
+
+    const { getByTestId, findByTestId } = render(<HomeScreen />);
+
+    fireEvent.press(getByTestId("household-option-h2"));
+
+    expect((await findByTestId("active-household-label")).props.children).toContain("Home B");
+  });
 });

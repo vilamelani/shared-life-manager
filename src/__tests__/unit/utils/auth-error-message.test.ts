@@ -10,6 +10,17 @@ describe("normalizeAuthErrorMessage", () => {
     expect(result).toBe("Invalid email or password.");
   });
 
+  it("maps network fetch failures to actionable message", () => {
+    const result = normalizeAuthErrorMessage(
+      new Error("Failed to fetch"),
+      "Fallback",
+    );
+
+    expect(result).toBe(
+      "Network error reaching Supabase. Check your internet or DNS and try again.",
+    );
+  });
+
   it("returns fallback when error is unknown object", () => {
     const result = normalizeAuthErrorMessage(
       { message: "something else" },

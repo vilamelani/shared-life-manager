@@ -1,4 +1,8 @@
 const authErrorMessageMap: Record<string, string> = {
+  "failed to fetch":
+    "Network error reaching Supabase. Check your internet or DNS and try again.",
+  "network request failed":
+    "Network error reaching Supabase. Check your internet or DNS and try again.",
   "invalid login credentials": "Invalid email or password.",
   "email not confirmed": "Please confirm your email before signing in.",
   "user already registered": "An account with this email already exists.",

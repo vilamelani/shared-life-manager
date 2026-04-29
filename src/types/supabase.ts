@@ -59,6 +59,35 @@ export type Database = {
           joined_at: string;
         }>;
       };
+      expenses: {
+        Row: {
+          id: string;
+          household_id: string;
+          title: string;
+          amount: number;
+          paid_by_user_id: string;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          household_id: string;
+          title: string;
+          amount: number;
+          paid_by_user_id: string;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<{
+          id: string;
+          household_id: string;
+          title: string;
+          amount: number;
+          paid_by_user_id: string;
+          notes: string | null;
+          created_at: string;
+        }>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
