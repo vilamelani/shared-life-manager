@@ -31,6 +31,7 @@ export function AppNavigator({ colorScheme, isAuthenticated }: AppNavigatorProps
           options={{ headerShown: false }}
           redirect={isAuthenticated}
         />
+        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", title: "About Shared Life Manager" }}

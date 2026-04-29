@@ -8,6 +8,8 @@ jest.mock("@/src/services/supabase", () => ({
       signUp: jest.fn(),
       signOut: jest.fn(),
       getSession: jest.fn(),
+      exchangeCodeForSession: jest.fn(),
+      verifyOtp: jest.fn(),
       onAuthStateChange: jest.fn(),
     },
   },
@@ -19,6 +21,8 @@ const mockSupabase = supabase as unknown as {
     signUp: jest.Mock;
     signOut: jest.Mock;
     getSession: jest.Mock;
+    exchangeCodeForSession: jest.Mock;
+    verifyOtp: jest.Mock;
     onAuthStateChange: jest.Mock;
   };
 };
@@ -83,5 +87,18 @@ describe("authService", () => {
 
     expect(mockSupabase.auth.onAuthStateChange).toHaveBeenCalled();
     expect(result).toBe(subscription);
+  });
+
+  it("completes email verification with code exchange", async () => {
+    const session = { access_token: "abc" };
+    mockSupabase.auth.exchangeCodeForSession.mockResolvedValue({
+      data: { session },
+      error: null,
+    });
+
+    const result = await authService.completeEmailVerification({ code: "code123" });
+
+    expect(mockSupabase.auth.exchangeCodeForSession).toHaveBeenCalledWith("code123");
+    expect(result).toEqual(session);
   });
 });

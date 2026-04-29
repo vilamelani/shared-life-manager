@@ -18,3 +18,9 @@ export type AuthStateChangeCallback = (
   event: AuthChangeEvent,
   session: Session | null,
 ) => void;
+
+export type CompleteEmailVerificationParams = {
+  code?: string;
+  tokenHash?: string;
+  type?: string;
+};

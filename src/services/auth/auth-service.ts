@@ -1,9 +1,10 @@
-import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import type { AuthChangeEvent, EmailOtpType, Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/src/services/supabase";
 import type {
   AuthSession,
   AuthStateChangeCallback,
+  CompleteEmailVerificationParams,
   SignInParams,
   SignUpParams,
 } from "@/src/types/auth";
@@ -52,6 +53,37 @@ const getSession = async (): Promise<AuthSession> => {
   return data.session;
 };
 
+const completeEmailVerification = async ({
+  code,
+  tokenHash,
+  type,
+}: CompleteEmailVerificationParams): Promise<AuthSession> => {
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      throw error;
+    }
+
+    return data.session;
+  }
+
+  if (tokenHash && type) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: type as EmailOtpType,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data.session;
+  }
+
+  return getSession();
+};
+
 const onAuthStateChange = (callback: AuthStateChangeCallback) => {
   return supabase.auth.onAuthStateChange(
     (event: AuthChangeEvent, session: Session | null) => callback(event, session),
@@ -63,5 +95,6 @@ export const authService = {
   signUpWithPassword,
   signOut,
   getSession,
+  completeEmailVerification,
   onAuthStateChange,
 };
