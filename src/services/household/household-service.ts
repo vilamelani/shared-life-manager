@@ -40,7 +40,6 @@ const createHousehold = async ({
     .from("households")
     .insert({
       name: trimmedName,
-      created_by: userId,
       invite_code: inviteCode,
     })
     .select()

@@ -25,7 +25,7 @@ export type Database = {
           id?: string;
           name: string;
           invite_code: string;
-          created_by: string;
+          created_by?: string;
           created_at?: string;
         };
         Update: Partial<{
@@ -88,6 +88,35 @@ export type Database = {
           paid_by_user_id: string;
           split_strategy: "equal_split";
           notes: string | null;
+          created_at: string;
+        }>;
+      };
+      shopping_items: {
+        Row: {
+          id: string;
+          household_id: string;
+          name: string;
+          quantity: number;
+          added_by_user_id: string;
+          is_completed: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          household_id: string;
+          name: string;
+          quantity?: number;
+          added_by_user_id: string;
+          is_completed?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<{
+          id: string;
+          household_id: string;
+          name: string;
+          quantity: number;
+          added_by_user_id: string;
+          is_completed: boolean;
           created_at: string;
         }>;
       };

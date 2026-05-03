@@ -75,4 +75,26 @@ describe("useHouseholdOnboarding", () => {
       expect(result.current.successMessage).toBe("Joined household successfully."),
     );
   });
+
+  it("shows Supabase object error message when service throws plain object", async () => {
+    const mockedCreate = householdService.createHousehold as jest.Mock;
+    mockedCreate.mockRejectedValue({
+      code: "PGRST205",
+      message: "Could not find table 'public.households'",
+    });
+
+    const { result } = renderHook(() => useHouseholdOnboarding());
+
+    act(() => {
+      result.current.setHouseholdName("My Home");
+    });
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    expect(result.current.errorMessage).toBe(
+      "Household data tables are missing. Run the Supabase migrations in your project.",
+    );
+  });
 });

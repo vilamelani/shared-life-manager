@@ -7,7 +7,7 @@ type ExpenseFormCardProps = {
   amountInput: string;
   notes: string;
   paidByUserId: string;
-  payerOptions: Array<{ userId: string; label: string }>;
+  payerOptions: { userId: string; label: string }[];
   isSubmitting: boolean;
   errorMessage: string | null;
   onTitleChange: (value: string) => void;

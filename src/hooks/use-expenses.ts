@@ -11,7 +11,7 @@ type UseExpensesResult = {
   amountInput: string;
   notes: string;
   paidByUserId: string;
-  payerOptions: Array<{ userId: string; label: string }>;
+  payerOptions: { userId: string; label: string }[];
   isLoading: boolean;
   isSubmitting: boolean;
   errorMessage: string | null;
@@ -36,7 +36,9 @@ export const useExpenses = (): UseExpensesResult => {
   const [amountInput, setAmountInput] = useState("");
   const [notes, setNotes] = useState("");
   const [paidByUserId, setPaidByUserId] = useState("");
-  const [payerOptions, setPayerOptions] = useState<Array<{ userId: string; label: string }>>([]);
+  const [payerOptions, setPayerOptions] = useState<{ userId: string; label: string }[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

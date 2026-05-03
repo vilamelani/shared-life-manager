@@ -3,6 +3,7 @@ import { useState } from "react";
 import { householdService } from "@/src/services/household/household-service";
 import { authStore, useAuthStore } from "@/src/store/auth-store";
 import type { Household } from "@/src/types/household";
+import { normalizeServiceErrorMessage } from "@/src/utils/service-error";
 
 type OnboardingMode = "create" | "join";
 
@@ -60,11 +61,9 @@ export const useHouseholdOnboarding = (): UseHouseholdOnboardingResult => {
       setHousehold(joinedHousehold);
       setSuccessMessage("Joined household successfully.");
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Something went wrong. Please try again.");
-      }
+      setErrorMessage(
+        normalizeServiceErrorMessage(error, "Something went wrong. Please try again."),
+      );
     } finally {
       setIsSubmitting(false);
     }
