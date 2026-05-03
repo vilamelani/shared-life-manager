@@ -10,6 +10,8 @@ type UseExpensesResult = {
   title: string;
   amountInput: string;
   notes: string;
+  paidByUserId: string;
+  payerOptions: Array<{ userId: string; label: string }>;
   isLoading: boolean;
   isSubmitting: boolean;
   errorMessage: string | null;
@@ -20,6 +22,7 @@ type UseExpensesResult = {
   setTitle: (value: string) => void;
   setAmountInput: (value: string) => void;
   setNotes: (value: string) => void;
+  setPaidByUserId: (value: string) => void;
   submitExpense: () => Promise<void>;
   reloadExpenses: () => Promise<void>;
 };
@@ -32,6 +35,8 @@ export const useExpenses = (): UseExpensesResult => {
   const [title, setTitle] = useState("");
   const [amountInput, setAmountInput] = useState("");
   const [notes, setNotes] = useState("");
+  const [paidByUserId, setPaidByUserId] = useState("");
+  const [payerOptions, setPayerOptions] = useState<Array<{ userId: string; label: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -63,6 +68,42 @@ export const useExpenses = (): UseExpensesResult => {
   useEffect(() => {
     void reloadExpenses();
   }, [reloadExpenses]);
+
+  useEffect(() => {
+    if (!activeHouseholdId || !user?.id) {
+      setPayerOptions([]);
+      setPaidByUserId("");
+      return;
+    }
+
+    const loadPayerOptions = async () => {
+      try {
+        const memberUserIds = await expensesService.listHouseholdMemberUserIds(
+          activeHouseholdId,
+        );
+        const normalizedUserIds = Array.from(new Set(memberUserIds));
+        const options = normalizedUserIds.map((memberUserId) => ({
+          userId: memberUserId,
+          label:
+            memberUserId === user.id
+              ? "Me"
+              : `Member ${memberUserId.slice(0, 6)}...`,
+        }));
+
+        setPayerOptions(options);
+        setPaidByUserId((currentPaidByUserId) =>
+          options.some((option) => option.userId === currentPaidByUserId)
+            ? currentPaidByUserId
+            : user.id,
+        );
+      } catch {
+        setPayerOptions([{ userId: user.id, label: "Me" }]);
+        setPaidByUserId(user.id);
+      }
+    };
+
+    void loadPayerOptions();
+  }, [activeHouseholdId, user?.id]);
 
   useEffect(() => {
     if (!activeHouseholdId) {
@@ -98,7 +139,8 @@ export const useExpenses = (): UseExpensesResult => {
         householdId: activeHouseholdId,
         title,
         amount: parsedAmount,
-        paidByUserId: user.id,
+        paidByUserId: paidByUserId || user.id,
+        splitStrategy: "equal_split",
         notes,
       });
       setTitle("");
@@ -121,6 +163,8 @@ export const useExpenses = (): UseExpensesResult => {
     title,
     amountInput,
     notes,
+    paidByUserId,
+    payerOptions,
     isLoading,
     isSubmitting,
     errorMessage,
@@ -131,6 +175,7 @@ export const useExpenses = (): UseExpensesResult => {
     setTitle,
     setAmountInput,
     setNotes,
+    setPaidByUserId,
     submitExpense,
     reloadExpenses,
   };

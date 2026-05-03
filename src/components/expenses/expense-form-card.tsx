@@ -6,11 +6,14 @@ type ExpenseFormCardProps = {
   title: string;
   amountInput: string;
   notes: string;
+  paidByUserId: string;
+  payerOptions: Array<{ userId: string; label: string }>;
   isSubmitting: boolean;
   errorMessage: string | null;
   onTitleChange: (value: string) => void;
   onAmountChange: (value: string) => void;
   onNotesChange: (value: string) => void;
+  onPaidByUserIdChange: (value: string) => void;
   onSubmit: () => Promise<void>;
 };
 
@@ -18,11 +21,14 @@ export function ExpenseFormCard({
   title,
   amountInput,
   notes,
+  paidByUserId,
+  payerOptions,
   isSubmitting,
   errorMessage,
   onTitleChange,
   onAmountChange,
   onNotesChange,
+  onPaidByUserIdChange,
   onSubmit,
 }: ExpenseFormCardProps) {
   return (
@@ -50,6 +56,25 @@ export function ExpenseFormCard({
         onChangeText={onNotesChange}
         style={styles.input}
       />
+      <View style={styles.payerRow}>
+        <ThemedText>Paid by:</ThemedText>
+        <View style={styles.payerOptions}>
+          {payerOptions.map((option) => (
+            <Pressable
+              key={option.userId}
+              accessibilityRole="button"
+              testID={`expense-payer-${option.userId}`}
+              style={[
+                styles.payerOption,
+                option.userId === paidByUserId ? styles.payerOptionActive : null,
+              ]}
+              onPress={() => onPaidByUserIdChange(option.userId)}
+            >
+              <ThemedText>{option.label}</ThemedText>
+            </Pressable>
+          ))}
+        </View>
+      </View>
       {errorMessage ? <ThemedText style={styles.error}>{errorMessage}</ThemedText> : null}
       <Pressable
         accessibilityRole="button"
@@ -94,5 +119,24 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "#D70015",
+  },
+  payerRow: {
+    gap: 8,
+  },
+  payerOptions: {
+    flexDirection: "row",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  payerOption: {
+    borderWidth: 1,
+    borderColor: "#C7C7CC",
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  payerOptionActive: {
+    borderColor: "#0A84FF",
+    backgroundColor: "#EAF3FF",
   },
 });

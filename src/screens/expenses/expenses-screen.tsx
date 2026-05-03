@@ -15,6 +15,8 @@ export function ExpensesScreen() {
     title,
     amountInput,
     notes,
+    paidByUserId,
+    payerOptions,
     isLoading,
     isSubmitting,
     errorMessage,
@@ -25,6 +27,7 @@ export function ExpensesScreen() {
     setTitle,
     setAmountInput,
     setNotes,
+    setPaidByUserId,
     submitExpense,
   } = useExpenses();
 
@@ -48,11 +51,14 @@ export function ExpensesScreen() {
         title={title}
         amountInput={amountInput}
         notes={notes}
+        paidByUserId={paidByUserId}
+        payerOptions={payerOptions}
         isSubmitting={isSubmitting}
         errorMessage={errorMessage}
         onTitleChange={setTitle}
         onAmountChange={setAmountInput}
         onNotesChange={setNotes}
+        onPaidByUserIdChange={setPaidByUserId}
         onSubmit={submitExpense}
       />
       <ExpensesSummaryCard

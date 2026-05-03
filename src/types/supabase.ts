@@ -66,6 +66,7 @@ export type Database = {
           title: string;
           amount: number;
           paid_by_user_id: string;
+          split_strategy: "equal_split";
           notes: string | null;
           created_at: string;
         };
@@ -75,6 +76,7 @@ export type Database = {
           title: string;
           amount: number;
           paid_by_user_id: string;
+          split_strategy?: "equal_split";
           notes?: string | null;
           created_at?: string;
         };
@@ -84,6 +86,7 @@ export type Database = {
           title: string;
           amount: number;
           paid_by_user_id: string;
+          split_strategy: "equal_split";
           notes: string | null;
           created_at: string;
         }>;

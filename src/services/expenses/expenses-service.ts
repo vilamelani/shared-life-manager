@@ -7,6 +7,7 @@ const mapExpenseRow = (row: {
   title: string;
   amount: number;
   paid_by_user_id: string;
+  split_strategy: "equal_split";
   notes: string | null;
   created_at: string;
 }): Expense => {
@@ -16,6 +17,7 @@ const mapExpenseRow = (row: {
     title: row.title,
     amount: row.amount,
     paidByUserId: row.paid_by_user_id,
+    splitStrategy: row.split_strategy,
     notes: row.notes,
     createdAt: row.created_at,
   };
@@ -40,6 +42,7 @@ const createExpense = async ({
   title,
   amount,
   paidByUserId,
+  splitStrategy = "equal_split",
   notes,
 }: CreateExpenseInput): Promise<Expense> => {
   const trimmedTitle = title.trim();
@@ -58,6 +61,7 @@ const createExpense = async ({
       title: trimmedTitle,
       amount,
       paid_by_user_id: paidByUserId,
+      split_strategy: splitStrategy,
       notes: notes?.trim() ? notes.trim() : null,
     })
     .select()
@@ -68,6 +72,19 @@ const createExpense = async ({
   }
 
   return mapExpenseRow(data);
+};
+
+const listHouseholdMemberUserIds = async (householdId: string): Promise<string[]> => {
+  const { data, error } = await supabase
+    .from("household_memberships")
+    .select("user_id")
+    .eq("household_id", householdId);
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []).map((member) => member.user_id);
 };
 
 const subscribeToHouseholdExpenses = (
@@ -99,4 +116,5 @@ export const expensesService = {
   listHouseholdExpenses,
   createExpense,
   subscribeToHouseholdExpenses,
+  listHouseholdMemberUserIds,
 };

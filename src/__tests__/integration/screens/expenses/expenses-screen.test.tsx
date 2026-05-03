@@ -9,6 +9,7 @@ jest.mock("@/src/services/expenses/expenses-service", () => ({
     listHouseholdExpenses: jest.fn(),
     createExpense: jest.fn(),
     subscribeToHouseholdExpenses: jest.fn(),
+    listHouseholdMemberUserIds: jest.fn(),
   },
 }));
 
@@ -38,6 +39,10 @@ describe("ExpensesScreen", () => {
       jest.fn(),
     );
     (expensesService.listHouseholdExpenses as jest.Mock).mockResolvedValue([]);
+    (expensesService.listHouseholdMemberUserIds as jest.Mock).mockResolvedValue([
+      "u1",
+      "u2",
+    ]);
   });
 
   it("creates an expense from the form", async () => {
@@ -63,6 +68,7 @@ describe("ExpensesScreen", () => {
         title: "Groceries",
         amount: 20,
         paidByUserId: "u1",
+        splitStrategy: "equal_split",
         notes: "",
       }),
     );

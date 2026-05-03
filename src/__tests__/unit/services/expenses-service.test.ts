@@ -25,6 +25,7 @@ describe("expensesService", () => {
           title: "Groceries",
           amount: 45.5,
           paid_by_user_id: "u1",
+          split_strategy: "equal_split",
           notes: null,
           created_at: "2026-01-01",
         },
@@ -52,6 +53,7 @@ describe("expensesService", () => {
         title: "Rent",
         amount: 500,
         paid_by_user_id: "u1",
+        split_strategy: "equal_split",
         notes: "April",
         created_at: "2026-01-01",
       },
@@ -72,5 +74,19 @@ describe("expensesService", () => {
 
     expect(result.id).toBe("e2");
     expect(insert).toHaveBeenCalled();
+  });
+
+  it("lists household member user ids", async () => {
+    const mockedFrom = supabase.from as jest.Mock;
+    const eq = jest.fn().mockResolvedValue({
+      data: [{ user_id: "u1" }, { user_id: "u2" }],
+      error: null,
+    });
+    const select = jest.fn().mockReturnValue({ eq });
+    mockedFrom.mockReturnValue({ select });
+
+    const result = await expensesService.listHouseholdMemberUserIds("h1");
+
+    expect(result).toEqual(["u1", "u2"]);
   });
 });
