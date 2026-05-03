@@ -120,6 +120,61 @@ export type Database = {
           created_at: string;
         }>;
       };
+      savings_goals: {
+        Row: {
+          id: string;
+          household_id: string;
+          title: string;
+          target_amount: number;
+          target_date: string | null;
+          created_by_user_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          household_id: string;
+          title: string;
+          target_amount: number;
+          target_date?: string | null;
+          created_by_user_id: string;
+          created_at?: string;
+        };
+        Update: Partial<{
+          id: string;
+          household_id: string;
+          title: string;
+          target_amount: number;
+          target_date: string | null;
+          created_by_user_id: string;
+          created_at: string;
+        }>;
+      };
+      savings_contributions: {
+        Row: {
+          id: string;
+          savings_goal_id: string;
+          household_id: string;
+          amount: number;
+          contributed_by_user_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          savings_goal_id: string;
+          household_id: string;
+          amount: number;
+          contributed_by_user_id: string;
+          created_at?: string;
+        };
+        Update: Partial<{
+          id: string;
+          savings_goal_id: string;
+          household_id: string;
+          amount: number;
+          contributed_by_user_id: string;
+          created_at: string;
+        }>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
